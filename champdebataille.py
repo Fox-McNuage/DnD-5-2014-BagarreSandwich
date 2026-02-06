@@ -15,7 +15,7 @@ class Champdebataille(pyglet.window.Window):
         self.clear()
         for i in self.combattants:
             i.draw()
-        if self.select != None:
+        if self.select is None:
             self.select.draw_selected()
 
     def add_combattant(self, perso):
@@ -28,22 +28,20 @@ class Champdebataille(pyglet.window.Window):
         if self.status != 'perso':
             if self.status.terrain is True:
                 self.add_zone(self.status)
-        
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        if self.status =='perso':
+        if self.status == 'perso':
             if (x-self.select.position_save[0])**2 + (y-self.select.position_save[1])**2 <= self.select.speed**2:
                 self.select.move((x, y))
         else:
             self.status.position = (x, y)
-            
 
     def tour_order(self):
         self.combattants = sorted(self.combattants, key=lambda perso: perso.initiative)[::-1]
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.ENTER:
-            if self.select == None:
+            if self.select is None:
                 self.tour_order()
                 self.select = self.combattants[0]
             else:
@@ -67,7 +65,6 @@ class Champdebataille(pyglet.window.Window):
                 self.select.portée += 1.5*10
         if symbol == pyglet.window.key.DOWN and self.select.portée >= 1.5*10:
                 self.select.portée -= 1.5*10
-
 
 
 class Personnage:
@@ -99,7 +96,7 @@ class Personnage:
 
     def __str__(self):
         return self.nom
-    
+
     def change_portée(self, newportée):
         self.portée = newportée
 
@@ -137,7 +134,7 @@ class Sort_zone_cône:
         self.orientation = orientation
 
     def draw(self):
-        pyglet.shapes.Sector(self.position[0], self.position[1], self.rayon,angle=self.angle, start_angle=self.orientation, color=(255, 153, 51, 100))
+        pyglet.shapes.Sector(self.position[0], self.position[1], self.rayon, angle=self.angle, start_angle=self.orientation, color=(255, 153, 51, 100))
 
     def move(self, new_orientation):
         self.orientation = new_orientation
