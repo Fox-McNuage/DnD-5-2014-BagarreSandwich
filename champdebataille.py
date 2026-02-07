@@ -15,7 +15,7 @@ class Champdebataille(pyglet.window.Window):
         self.clear()
         for i in self.combattants:
             i.draw()
-        if self.select is None:
+        if self.select != None:
             self.select.draw_selected()
 
     def add_combattant(self, perso):
@@ -145,3 +145,4 @@ window.add_combattant(Personnage('Gronwall', (0, 102, 204, 255), 0.5, 1.5, 7.5, 
 window.add_combattant(Personnage('Nyre', (0, 102, 204, 255), 0.5, 1.5, 10, (440, 400), 45, 10))
 window.add_combattant(Personnage('Nour', (0, 102, 204, 255), 0.5, 1.5, 9, (350, 400), 0, 7))
 pyglet.app.run()
+
