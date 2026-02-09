@@ -62,7 +62,7 @@ class Champdebataille(pyglet.window.Window):
             if self.select is None:
                 self.tour_order()
                 self.select = self.combattants[0]
-            else:
+            elif self.status == 'perso':
                 i = self.combattants.index(self.select)
                 self.select.position_tour = self.select.position
                 self.select.position_save = self.select.position
@@ -73,6 +73,8 @@ class Champdebataille(pyglet.window.Window):
                     self.tour += 1
                 else:
                     self.select = self.combattants[i + 1]
+            elif self.status == 'sort' or self.status == 'remove':
+                self.status = 'perso'
         if symbol == pyglet.window.key.BACKSPACE:
             self.select.position = self.select.position_tour
             self.select.position_save = self.select.position_tour
