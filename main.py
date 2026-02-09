@@ -14,5 +14,4 @@ window.add_combattant(
 window.add_combattant(
     Personnage("Nour", (0, 102, 0, 255), 0.5, 1.5, 9, (350, 400), 0, 7)
 )
-window.add_zone(Sort_zone_cercle(rayon=500, position=(200, 350), durée=3))
 pyglet.app.run()

@@ -1,5 +1,6 @@
 import pyglet
 from math import sqrt
+from classes.sorts import Sort_zone_cercle
 
 
 class Champdebataille(pyglet.window.Window):
@@ -28,22 +29,28 @@ class Champdebataille(pyglet.window.Window):
     def add_zone(self, zone):
         self.zones.append(zone)
 
-    def on_mouse_release(self, x, y, button, modifiers):
-        if self.status != "perso":
-            if self.status.terrain:
-                self.add_zone(self.status)
+    def on_mouse_press(self, x, y, button, modifiers): # permet de supprimer les persos/sorts en cliquant dessus, le changement de status se fait avec SUPPR
+        if self.status == 'remove':
+            for i in self.combattants:
+                if (x - i.position[0])**2 + (y - i.position[1])**2 <= i.taille**2:
+                    if self.select == i and self.combattants.index(self.select) != len(self.combattants) - 1:
+                        self.select = self.combattants[self.combattants.index(i) + 1]
+                        self.status = 'perso'
+                    elif self.select == i:
+                        self.select = self.combattants[0]
+                        self.status = 'perso'
+                    self.combattants.remove(i)
+            for i in self.zones:
+                if (x - i.position[0])**2 + (y - i.position[1])**2 <= 15**2:
+                    self.zones.remove(i)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        print(self.select)
-        if self.status == "perso" and self.select is not None:
-            if (x - self.select.position_save[0]) ** 2 + (
-                y - self.select.position_save[1]
-            ) ** 2 <= self.select.speed**2:
+        if self.status == 'perso' and self.select is not None:
+            if (x-self.select.position_save[0])**2 + (y-self.select.position_save[1])**2 <= self.select.speed**2:
                 self.select.move((x, y))
-        else:
-            pass
-            # c'est censé vouloir dire quoi ça même ?
-            # self.status.position = (x, y) 
+        if self.status == 'sort':  # Pour bouger les sorts
+            if (x-self.select.position_save[0])**2 + (y-self.select.position_save[1])**2 <= self.select.portée**2:
+                self.zones[-1].move((x, y))
 
     def tour_order(self):
         self.combattants = sorted(self.combattants, key=lambda perso: perso.initiative)[
@@ -60,6 +67,7 @@ class Champdebataille(pyglet.window.Window):
                 self.select.position_tour = self.select.position
                 self.select.position_save = self.select.position
                 self.select.portée = self.select.portée_base
+                self.select.speed = self.select.basespeed
                 if i == len(self.combattants) - 1:
                     self.select = self.combattants[0]
                     self.tour += 1
@@ -79,3 +87,9 @@ class Champdebataille(pyglet.window.Window):
             self.select.portée += 1.5 * 10
         if symbol == pyglet.window.key.DOWN and self.select.portée >= 1.5 * 10:
             self.select.portée -= 1.5 * 10
+        if symbol == pyglet.window.key.S:  # Pour passer en mode sort, le sort par defaut est un cercle pour le moment on peut pas le changer
+            self.status = 'sort'
+            new_sort = Sort_zone_cercle(15, self.select.position)
+            self.zones.append(new_sort)
+        if symbol == pyglet.window.key.DELETE:  # Pour passer en mode suppression
+            self.status = 'remove'
